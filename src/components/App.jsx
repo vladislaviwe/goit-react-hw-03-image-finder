@@ -1,7 +1,8 @@
 import { Component } from 'react'
 
-import axios from 'axios';
-import { getImages } from 'api/api';
+import { getImages, searchImages } from 'api/api';
+
+import { Theme } from './AppStyled';
 
 import ImageGallery from "./ImageGallery/ImageGallery";
 import Loader from './Loader/Loader';
@@ -15,6 +16,7 @@ export default class App extends Component {
     loading: false,
     error: null,
     page: 1,
+    searchName: ""
   }  
 
   componentDidMount() {
@@ -22,30 +24,53 @@ export default class App extends Component {
   }
 
   componentDidUpdate(_, prevState) {
-    const { page } = this.state;
-    if (prevState.page !== page) {
+    const { page, searchName } = this.state;
+    if (!searchName && prevState.page !== page) {
       this.fetchImages();
+      return;
+    }
+    if (prevState.searchName !== searchName) {
+      this.setState({
+        items: [],
+      })
+    }
+    if((searchName && prevState.searchName !== searchName) ||
+    prevState.page !== page) {
+      this.fetchImages(searchName, page);
     }
   }
 
   async fetchImages() {
-    const { page } = this.state;
+    const { searchName, page } = this.state;
     this.setState({
         loading: true,
     });
 
     try {
-      const data = await getImages(page)
+      const data = await getImages(page);
+      const searchData = await searchImages(searchName, page);
       this.setState(({items}) => {
-        if (page === 1) {
+        if (page === 1 && !searchName) {
           return {
             items: [...data.hits]
           }
         }
-        return {
-            items: [...items, ...data.hits]
+        if (page === 1 && searchName) {
+          return {
+            items: [...searchData.hits]
+          }
         }
-    })
+        if (!searchName) {
+          return {
+            items: [...items, ...data.hits]
+          }
+        }
+        if (searchName) {
+          return {
+            items: [...items, ...searchData.hits]
+          }
+        }
+      })
     } catch (error) {
       this.setState({
         error
@@ -58,34 +83,6 @@ export default class App extends Component {
     }
   }
 
-  // fetchImages() {
-  //   const { page, perPage } = this.state;
-  //   this.setState({
-  //       loading: true,
-  //   });
-
-  //   axios.get(`https://pixabay.com/api/?key=29393857-621a457e4e6b44715a66c2c62&page=${page}&per_page=${perPage}&q=cat`)
-  //   .then(({data}) => {
-  //       console.log(data);
-  //       this.setState(({items}) => {
-  //           if (page === 1) {
-  //             return {
-  //               items: [...data.hits]
-  //             }
-  //           }
-  //           return {
-  //               items: [...items, ...data.hits]
-  //           }
-  //       })
-  //   })
-  //   .catch(error => {
-  //       this.setState({
-  //           error
-  //       })
-  //   })
-  //   .finally(() => this.setState({loading: false}))
-  // }
-
   loadMore = () => {
     this.setState(({page}) => {
       return {
@@ -94,19 +91,25 @@ export default class App extends Component {
     })
   }
 
+  onSearch = ({searchName}) => {
+    this.setState({
+      searchName,
+    })
+  }
+
   render() {
     const { items, loading, error } = this.state;
-    const { loadMore } = this;
+    const { loadMore, onSearch } = this;
     const isImages = Boolean(items.length);
 
     return (
-      <div>
-        <Searchbar />
+      <Theme>
+        <Searchbar onSearch={onSearch}/>
         {loading && <Loader />}
         {error && <h2>Oops, something went wrong. Please try to reload the page</h2>}
         {isImages && <ImageGallery items={items}/>}
         {isImages && <Button loadMore={loadMore}/>}
-      </div>
+      </Theme>
     )
   }
 }
