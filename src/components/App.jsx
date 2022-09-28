@@ -98,7 +98,7 @@ export default class App extends Component {
   }
 
   render() {
-    const { items, loading, error } = this.state;
+    const { items, loading, error, searchName } = this.state;
     const { loadMore, onSearch } = this;
     const isImages = Boolean(items.length);
 
@@ -108,6 +108,7 @@ export default class App extends Component {
         {loading && <Loader />}
         {error && <h2>Oops, something went wrong. Please try to reload the page</h2>}
         {isImages && <ImageGallery items={items}/>}
+        {!isImages && <h2>We didn't find any images for "{searchName}"</h2>}
         {isImages && <Button loadMore={loadMore}/>}
       </Theme>
     )

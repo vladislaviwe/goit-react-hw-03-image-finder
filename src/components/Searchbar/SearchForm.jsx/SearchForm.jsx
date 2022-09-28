@@ -2,6 +2,8 @@ import { Component } from 'react'
 
 import { Form, FormButton, FormButtonLabel, FormInput } from './SearchFormStyled';
 
+import { HiOutlineSearch } from "react-icons/hi";
+
 export default class SearchForm extends Component {
   state = {
     searchName: "",
@@ -35,8 +37,9 @@ export default class SearchForm extends Component {
 
     return (
         <Form onSubmit={handleSubmit}>
-            <FormButton type="submit">
-                <FormButtonLabel onClick={handleSubmit}>Search</FormButtonLabel>
+            <FormButton type="submit" onClick={handleSubmit}>
+                <HiOutlineSearch />
+                <FormButtonLabel></FormButtonLabel>
             </FormButton>
 
             <FormInput
