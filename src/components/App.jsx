@@ -2,7 +2,7 @@ import { Component } from 'react'
 
 import { getImages, searchImages } from 'api/api';
 
-import { Theme } from './AppStyled';
+import { Container } from './AppStyled';
 
 import ImageGallery from "./ImageGallery/ImageGallery";
 import Loader from './Loader/Loader';
@@ -48,7 +48,7 @@ export default class App extends Component {
   }
 
   async fetchImages() {
-    const { searchName, page, items } = this.state;
+    const { searchName, page } = this.state;
     this.setState({
         loading: true,
         isItems: true,
@@ -133,7 +133,7 @@ export default class App extends Component {
     const isImages = Boolean(items.length);
 
     return (
-      <Theme>
+      <Container>
         {modalOpen && <Modal tags={modalContent.tags} largeImageURL={modalContent.largeImageURL} onClose={closeModal}/>}
         <Searchbar onSearch={onSearch}/>
         {loading && <Loader />}
@@ -142,7 +142,7 @@ export default class App extends Component {
         {!isItems && !isImages && <h2>We didn't find any images for "{searchName}"</h2>}
         {isImages && isItems && items.length % 12 === 0 && <Button loadMore={loadMore}/>}
         {items.length % 12 !== 0 && <h2>There are no more images for your search query</h2>}
-      </Theme>
+      </Container>
     )
   }
 }
