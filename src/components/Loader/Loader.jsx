@@ -6,9 +6,10 @@ export default function Loader() {
     return (
         <LoaderContainer>
             <ColorRing
+                marginTop="100"
                 visible={true}
-                height="200"
-                width="200"
+                height="400"
+                width="400"
                 ariaLabel="blocks-loading"
                 wrapperStyle={{}}
                 wrapperClass="blocks-wrapper"

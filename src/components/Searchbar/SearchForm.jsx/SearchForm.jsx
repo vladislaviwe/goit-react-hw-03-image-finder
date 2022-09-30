@@ -4,13 +4,14 @@ import { Form, FormButton, FormButtonLabel, FormInput } from './SearchFormStyled
 
 import { HiOutlineSearch } from "react-icons/hi";
 
+import PropTypes from "prop-types";
+
 export default class SearchForm extends Component {
   state = {
     searchName: "",
   }
 
   handleChange = (e) => {
-    console.log(e.target);
     const { value, name } = e.target;
     this.setState({
       [name]: value,
@@ -55,4 +56,8 @@ export default class SearchForm extends Component {
         </Form>
     )
   }
+}
+
+SearchForm.propTypes = {
+  onSubmit: PropTypes.func.isRequired
 }
