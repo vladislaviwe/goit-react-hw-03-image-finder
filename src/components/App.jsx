@@ -41,7 +41,6 @@ export default class App extends Component {
         items: [],
         page: 1
       })
-      return;
     }
     if((searchName && prevState.searchName !== searchName) ||
     prevState.page !== page) {
