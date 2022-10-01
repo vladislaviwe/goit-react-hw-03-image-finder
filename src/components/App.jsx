@@ -36,12 +36,6 @@ export default class App extends Component {
       this.fetchImages();
       return;
     }
-    if (prevState.searchName !== searchName) {
-      this.setState({
-        items: [],
-        page: 1
-      })
-    }
     if((searchName && prevState.searchName !== searchName) ||
     prevState.page !== page) {
       this.fetchSearchImages(searchName, page);
@@ -130,6 +124,7 @@ export default class App extends Component {
   onSearch = ({searchName}) => {
     this.setState({
       searchName,
+      page: 1
     })
   }
 
