@@ -39,11 +39,13 @@ export default class App extends Component {
     if (prevState.searchName !== searchName) {
       this.setState({
         items: [],
+        page: 1
       })
+      return;
     }
     if((searchName && prevState.searchName !== searchName) ||
     prevState.page !== page) {
-      this.fetchImages(searchName, page);
+      this.fetchSearchImages(searchName, page);
     }
   }
 
@@ -56,6 +58,38 @@ export default class App extends Component {
 
     try {
       const data = await getImages(page);
+      this.setState(({items}) => {
+        if (page === 1 && !searchName) {
+          return {
+            items: [...data.hits]
+          }
+        }
+        if (!searchName && page > 1) {
+          return {
+            items: [...items, ...data.hits]
+          }
+        }
+      })
+    } catch (error) {
+      this.setState({
+        error
+      })
+    }
+    finally {
+      this.setState({
+        loading: false
+      })
+    }
+  }
+
+  async fetchSearchImages() {
+    const { searchName, page } = this.state;
+    this.setState({
+        loading: true,
+        isItems: true,
+    });
+
+    try {
       const searchData = await searchImages(searchName, page);
       if (!searchData.hits.length && searchName) {
         this.setState({
@@ -63,19 +97,9 @@ export default class App extends Component {
         })
       }
       this.setState(({items}) => {
-        if (page === 1 && !searchName) {
-          return {
-            items: [...data.hits]
-          }
-        }
         if (page === 1 && searchName) {
           return {
             items: [...searchData.hits]
-          }
-        }
-        if (!searchName) {
-          return {
-            items: [...items, ...data.hits]
           }
         }
         if (searchName) {
